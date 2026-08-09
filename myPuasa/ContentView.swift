@@ -10,13 +10,12 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         VStack {
-            Image(systemName: "moon.fill")
-                .imageScale(.large)
-                .foregroundStyle(.red)
-            Text("Welcom to myPuasa App")
-            Text("lets full fill our duty as a Muslim")
-                .padding(.top)
-                .font(.caption2)
+            TabView{
+                ProfileView()
+                    .tabItem(){
+                        Label("Profile",systemImage: "person.fill")
+                    }
+            }
             
         }
         
