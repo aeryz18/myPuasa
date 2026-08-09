@@ -14,6 +14,9 @@ struct ContentView: View {
                 .imageScale(.large)
                 .foregroundStyle(.red)
             Text("Welcom to myPuasa App")
+            Text("lets full fill our duty as a Muslim")
+                .padding(.top)
+                .font(.caption2)
             
         }
         
