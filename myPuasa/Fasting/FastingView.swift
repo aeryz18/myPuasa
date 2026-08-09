@@ -1,5 +1,5 @@
 //
-//  ProfileView.swift
+//  FastingView.swift
 //  myPuasa
 //
 //  Created by STDCX_MACBOOK PRO 32 on 09/08/2026.
@@ -7,14 +7,12 @@
 
 import SwiftUI
 
-struct ProfileView: View {
+struct FastingView: View {
     var body: some View {
-        Text("Profile View")
-        
-        
+        Text("Fasting View")
     }
 }
 
 #Preview {
-    ProfileView()
+    FastingView()
 }

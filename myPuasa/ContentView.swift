@@ -11,6 +11,24 @@ struct ContentView: View {
     var body: some View {
         VStack {
             TabView{
+                FastingView()
+                    .tabItem(){
+                        Label("Fasting",systemImage: "moon.fill")
+                    }
+
+                PeriodView()
+                    .tabItem(){
+                        Label("Period",systemImage: "drop.fill")
+                    }
+                HomeView()
+                    .tabItem(){
+                        Label("Home",systemImage: "house.fill")
+                    }
+                
+                FidyahView()
+                    .tabItem(){
+                        Label("Fidyah",systemImage: "circle")
+                    }
                 ProfileView()
                     .tabItem(){
                         Label("Profile",systemImage: "person.fill")
