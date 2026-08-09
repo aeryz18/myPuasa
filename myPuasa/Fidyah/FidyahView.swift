@@ -10,6 +10,8 @@ import SwiftUI
 struct FidyahView: View {
     var body: some View {
         Text("Fidayah View hellooo")
+            .bold()
+        
     }
 }
 
