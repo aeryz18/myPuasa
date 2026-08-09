@@ -10,6 +10,7 @@ import SwiftUI
 struct PeriodView: View {
     var body: some View {
         Text("Period View")
+            .bold()
     }
 }
 
