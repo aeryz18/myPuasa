@@ -45,7 +45,7 @@ struct HomeView: View {
                         
                     }
                     .padding()
-                    .background(.pink, in:RoundedRectangle(cornerRadius: 15))
+                    .background(.gray, in:RoundedRectangle(cornerRadius: 15))
                     .frame(maxWidth: .infinity, alignment: .center)
                     
                 }
@@ -53,17 +53,18 @@ struct HomeView: View {
                 
                 VStack {
                     HStack{
-                        ZStack{
-                            Circle()
-                                .foregroundStyle(Color.black)
-                                .frame(width: 350)
-                            Circle()
-                                .foregroundStyle(Color.white)
-                                .frame(width: 260)
-                            Text("Cycle Day")
-                                .foregroundStyle(Color.black)
-                                .bold()
-                            
+                        VStack {
+                            ZStack{
+                                Circle()
+                                    .foregroundStyle(Color.black)
+                                    .frame(width: 350)
+                                Circle()
+                                    .foregroundStyle(Color.white)
+                                    .frame(width: 260)
+                                Text("Cycle Day")
+                                    .foregroundStyle(Color.black)
+                                    .bold()
+                            }
                         }
                         
                     }
@@ -71,23 +72,41 @@ struct HomeView: View {
                     
                     VStack{
                         
-                        Text("Lorem")
+                        Text("Menstural Cycle Phases")
                             .padding()
                         HStack{
-                            Rectangle()
-                                .frame(width: 30, height: 30)
-                            Rectangle()
-                                .frame(width: 30, height: 30)
-                            Rectangle()
-                                .frame(width: 30, height: 30)
-                            Rectangle()
-                                .frame(width: 30, height: 30)
+                            VStack{
+                                Rectangle()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundStyle(.yellow)
+                                Text("Menstrual")
+                            }
+                            VStack{
+                                Rectangle()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundStyle(.blue)
+                                Text("Follicular")
+                            }
+                            VStack{
+                                Rectangle()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundStyle(.teal)
+                                Text("Ovulation")
+                            }
+                            VStack{
+                                Rectangle()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundStyle(.green)
+                                Text("Luteal")
+                            }
+
                         }
+                        
                     }
                     
                 }
                 .padding()
-                .background(.red)
+                .background(.gray)
                 
             }
             
