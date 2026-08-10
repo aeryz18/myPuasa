@@ -24,7 +24,6 @@ struct ContentView: View {
                     .tabItem(){
                         Label("Home",systemImage: "house.fill")
                     }
-                
                 FidyahView()
                     .tabItem(){
                         Label("Fidyah",systemImage: "circle")
@@ -43,4 +42,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+    
 }
