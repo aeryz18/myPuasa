@@ -10,6 +10,8 @@ import SwiftUI
 struct FastingView: View {
     var body: some View {
         Text("Fasting View")
+            .bold()
+        
     }
 }
 
