@@ -8,38 +8,40 @@
 import SwiftUI
 
 struct ContentView: View {
+    private let highlightColor = Color(red: 123 / 255, green: 45 / 255, blue: 63 / 255)
+    
     var body: some View {
-        VStack {
-            TabView{
-                FastingView()
-                    .tabItem(){
-                        Label("Fasting",systemImage: "moon.fill")
-                    }
+        TabView {
+            FastingView()
+                .tabItem {
+                    Label("Fasting", systemImage: "moon.fill")
+                }
 
-                PeriodView()
-                    .tabItem(){
-                        Label("Period",systemImage: "drop.fill")
-                    }
-                HomeView()
-                    .tabItem(){
-                        Label("Home",systemImage: "house.fill")
-                    }
-                FidyahView()
-                    .tabItem(){
-                        Label("Fidyah",systemImage: "circle")
-                    }
-                ProfileView()
-                    .tabItem(){
-                        Label("Profile",systemImage: "person.fill")
-                    }
-            }
-            
+            PeriodView()
+                .tabItem {
+                    Label("Period", systemImage: "drop.fill")
+                }
+
+            HomeView()
+                .tabItem {
+                    Label("Home", systemImage: "house.fill")
+                }
+
+            FidyahView()
+                .tabItem {
+                    Label("Fidyah", systemImage: "book.closed.fill")
+                }
+
+            ProfileView()
+                .tabItem {
+                    Label("Profile", systemImage: "person.fill")
+                }
         }
-        
-            }
+        .tint(highlightColor)
+    }
 }
 
 #Preview {
     ContentView()
-    
 }
+
