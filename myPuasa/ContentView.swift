@@ -39,9 +39,9 @@ struct ContentView: View {
             
 =======
         TabView {
-            FastingView()
+            HomeView()
                 .tabItem {
-                    Label("Fasting", systemImage: "moon.fill")
+                    Label("Home", systemImage: "house.fill")
                 }
 
             PeriodView()
@@ -49,10 +49,12 @@ struct ContentView: View {
                     Label("Period", systemImage: "drop.fill")
                 }
 
-            HomeView()
+           
+            FastingView()
                 .tabItem {
-                    Label("Home", systemImage: "house.fill")
+                    Label("Fasting", systemImage: "moon.fill")
                 }
+                
 
             FidyahView()
                 .tabItem {
