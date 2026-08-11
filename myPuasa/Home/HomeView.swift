@@ -8,129 +8,67 @@
 import SwiftUI
 
 struct HomeView: View {
+    private let backgroundColor = Color(red: 250 / 255, green: 248 / 255, blue: 245 / 255)
+    private let boxColor = Color(red: 237 / 255, green: 231 / 255, blue: 223 / 255)
+    private let borderColor = Color(red: 221 / 255, green: 212 / 255, blue: 200 / 255)
+    private let highlightColor = Color(red: 123 / 255, green: 45 / 255, blue: 63 / 255)
+    
     var body: some View {
-        VStack {
-            HStack{
-                Text("Welcome back Harith")
-                    .bold()
-                    .padding(.top)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                Spacer()
-            }
-            .padding(.bottom)
-            
-            
-            
-            
-            VStack{
-                HStack{
-                    HStack {
-                        ZStack{
-                            
-                            Circle()
-                                .foregroundStyle(Color.black)
-                                .frame(width: 70, height: 70)
-                            Circle()
-                                .foregroundStyle(Color.white)
-                                .frame(width: 60, height: 70)
-                            Text("7/14")
-                        }
-                        
-                        
-                        .font(.subheadline)
-                        Text("Keep it up, don't give up!")
-                            .padding(.leading)
-                            .font(.subheadline)
-                        Spacer()
-                        
-                    }
-                    .padding()
-                    .background(.gray, in:RoundedRectangle(cornerRadius: 15))
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    
-                }
-                .font(.title)
+        NavigationStack {
+            ZStack {
+                backgroundColor
+                    .ignoresSafeArea()
                 
-                VStack {
-                    HStack{
-                        VStack {
-                            ZStack{
-                                Circle()
-                                    .foregroundStyle(Color.black)
-                                    .frame(width: 350)
-                                Circle()
-                                    .foregroundStyle(Color.white)
-                                    .frame(width: 260)
-                                Text("Cycle Day")
-                                    .foregroundStyle(Color.black)
-                                    .bold()
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 16) {
+                        // Header / Greeting Section
+                        HStack {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("Welcome back, Harith 👋")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .padding(.top,4)
+                                    .foregroundColor(.primary)
+                                Text("Track & manage your fasting journey")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
                             }
+                            Spacer()
                         }
+                        .padding(.top, 6)
                         
+                        // Separated Cards
+                        IslamicCalendarCard(
+                            boxColor: boxColor,
+                            borderColor: borderColor,
+                            highlightColor: highlightColor
+                        )
+                        
+                        MenstrualStatusCard(
+                            boxColor: boxColor,
+                            borderColor: borderColor,
+                            highlightColor: highlightColor
+                        )
+                        
+                        FastingProgressCard(
+                            completedDays: 7,
+                            totalDays: 14,
+                            boxColor: boxColor,
+                            borderColor: borderColor,
+                            highlightColor: highlightColor
+                        )
+                        
+                        FidyahGuidelineCard(
+                            boxColor: boxColor,
+                            borderColor: borderColor,
+                            highlightColor: highlightColor
+                        )
                     }
-                    .foregroundStyle(.blue)
-                    
-                    VStack{
-                        
-                        Text("Menstural Cycle Phases")
-                            .padding()
-                        HStack{
-                            VStack{
-                                Rectangle()
-                                    .frame(width: 30, height: 30)
-                                    .foregroundStyle(.yellow)
-                                Text("Menstrual")
-                            }
-                            VStack{
-                                Rectangle()
-                                    .frame(width: 30, height: 30)
-                                    .foregroundStyle(.blue)
-                                Text("Follicular")
-                            }
-                            VStack{
-                                Rectangle()
-                                    .frame(width: 30, height: 30)
-                                    .foregroundStyle(.teal)
-                                Text("Ovulation")
-                            }
-                            VStack{
-                                Rectangle()
-                                    .frame(width: 30, height: 30)
-                                    .foregroundStyle(.green)
-                                Text("Luteal")
-                            }
-
-                        }
-                        
-                    }
-                    
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 24)
                 }
-                .padding()
-                .background(.gray)
-                
             }
-            
-            
-            
-            HStack{
-                VStack{
-                    HStack{
-                        Text("Fidyah Guideline")
-                            .font(.title2)
-                            .padding()
-                        
-                    }
-                    
-                    
-                }
-                .font(.title3)
-            }
-            
-            Spacer()
         }
-        
-        
-        
     }
 }
 
