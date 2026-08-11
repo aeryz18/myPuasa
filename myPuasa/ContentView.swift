@@ -11,50 +11,21 @@ struct ContentView: View {
     private let highlightColor = Color(red: 123 / 255, green: 45 / 255, blue: 63 / 255)
     
     var body: some View {
-<<<<<<< HEAD
-        VStack {
-            TabView{
-                FastingView()
-                    .tabItem(){
-                        Label("Fasting",systemImage: "moon.fill")
-                    }
-
-                CalendarView()
-                    .tabItem(){
-                        Label("Period",systemImage: "drop.fill")
-                    }
-                HomeView()
-                    .tabItem(){
-                        Label("Home",systemImage: "house.fill")
-                    }
-                FidyahView()
-                    .tabItem(){
-                        Label("Fidyah",systemImage: "circle")
-                    }
-                ProfileView()
-                    .tabItem(){
-                        Label("Profile",systemImage: "person.fill")
-                    }
-            }
-            
-=======
         TabView {
             HomeView()
                 .tabItem {
                     Label("Home", systemImage: "house.fill")
                 }
 
-            PeriodView()
+            CalendarView()
                 .tabItem {
                     Label("Period", systemImage: "drop.fill")
                 }
 
-           
             FastingView()
                 .tabItem {
                     Label("Fasting", systemImage: "moon.fill")
                 }
-                
 
             FidyahView()
                 .tabItem {
@@ -65,7 +36,6 @@ struct ContentView: View {
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")
                 }
->>>>>>> main
         }
         .tint(highlightColor)
     }
@@ -74,4 +44,3 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
-
