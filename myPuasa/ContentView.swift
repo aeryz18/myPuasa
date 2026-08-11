@@ -16,7 +16,7 @@ struct ContentView: View {
                         Label("Fasting",systemImage: "moon.fill")
                     }
 
-                PeriodView()
+                CalendarView()
                     .tabItem(){
                         Label("Period",systemImage: "drop.fill")
                     }
