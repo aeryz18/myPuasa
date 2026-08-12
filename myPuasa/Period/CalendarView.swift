@@ -11,222 +11,317 @@ struct CalendarView: View {
     @State private var endDate: Date? = nil
     
     // Stores ALL period dates from ALL months
+    @AppStorage("savedPeriodDates") private var savedPeriodDates: Data = Data()
+    
     @State private var periodDates: Set<Date> = []
     
     @State private var selectingStartDate = true
     
     private let calendar = Calendar.current
+    private let healthManager = PeriodHealthManager()
+    
+    // MARK: - Health Calculations
+
+    private var latestPeriodDays: Int {
+        healthManager.latestPeriodDayCount(
+            from: periodDates
+        )
+    }
+
+    private var previousPeriodDays: Int {
+        healthManager.previousPeriodDayCount(
+            from: periodDates
+        )
+    }
+
+    private var currentCycleLength: Int? {
+        healthManager.currentCycleLength(
+            from: periodDates
+        )
+    }
+
+    private var previousCycleLength: Int? {
+        healthManager.previousCycleLength(
+            from: periodDates
+        )
+    }
+
+    private var averageCycleLength: Int? {
+        healthManager.averageCycleLength(
+            from: periodDates
+        )
+    }
+
+    private var targetPeriodDate: Date? {
+        healthManager.targetPeriodDate(
+            from: periodDates
+        )
+    }
+
+    private var cyclePattern: String {
+        healthManager.cyclePattern(
+            from: periodDates
+        )
+    }
+
+    private var cycleComparison: String {
+        healthManager.cycleComparisonText(
+            from: periodDates
+        )
+    }
+
+    private var targetStatus: String {
+        healthManager.targetStatus(
+            from: periodDates
+        )
+    }
+
+    private var periodStatus: String {
+        healthManager.periodStatus(
+            from: periodDates
+        )
+    }
     
     // MARK: - Body
-    
+    init() {
+        if let decoded = try? JSONDecoder().decode(
+            [Date].self,
+            from: UserDefaults.standard.data(
+                forKey: "savedPeriodDates"
+            ) ?? Data()
+        ) {
+            _periodDates = State(
+                initialValue: Set(decoded)
+            )
+        }
+    }
     var body: some View {
         NavigationStack
         {
-            VStack(spacing: 20) {
-                
-              
-                // MARK: - Header
-
-                ZStack {
+            ScrollView {
+                VStack(spacing: 20) {
                     
-                    // Centered month title + arrows
-                    HStack(spacing: 14) {
+                    
+                    
+                    // MARK: - Header
+                    
+                    ZStack {
+                        
+                        // Centered month title + arrows
+                        HStack(spacing: 14) {
+                            
+                            Button {
+                                changeMonth(by: -1)
+                            } label: {
+                                Image(systemName: "chevron.left")
+                                    .font(.system(size: 16, weight: .semibold))
+                            }
+                            
+                            Text(monthYearString(from: currentMonth))
+                                .font(.system(size: 22, weight: .bold))
+                            
+                            Button {
+                                changeMonth(by: 1)
+                            } label: {
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 16, weight: .semibold))
+                            }
+                        }
+                        
+                        // Yearly calendar stays at the far right
+                        HStack {
+                            Spacer()
+                            
+                            NavigationLink {
+                                YearlyCalendarView(
+                                    periodDates: $periodDates
+                                )
+                            } label: {
+                                Image(systemName: "26.calendar")
+                                    .font(.system(size: 16, weight: .semibold))
+                            }
+                        }
+                        .padding(.trailing, 20)
+                    }
+                    
+                    
+                    
+                    // MARK: Start / End Selection
+                    
+                    HStack(spacing: 12) {
                         
                         Button {
-                            changeMonth(by: -1)
+                            selectingStartDate = true
                         } label: {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 16, weight: .semibold))
+                            VStack(alignment: .leading) {
+                                Text("Start Period")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                                
+                                Text(
+                                    startDate == nil
+                                    ? "Select date"
+                                    : formattedDate(startDate!)
+                                )
+                                .font(.system(size: 15, weight: .semibold))
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding()
+                            .background(
+                                selectingStartDate
+                                ? Color.pink.opacity(0.15)
+                                : Color.gray.opacity(0.1)
+                            )
+                            .cornerRadius(12)
                         }
                         
-                        Text(monthYearString(from: currentMonth))
-                            .font(.system(size: 22, weight: .bold))
                         
                         Button {
-                            changeMonth(by: 1)
+                            selectingStartDate = false
                         } label: {
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 16, weight: .semibold))
+                            VStack(alignment: .leading) {
+                                Text("End Period")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                                
+                                Text(
+                                    endDate == nil
+                                    ? "Select date"
+                                    : formattedDate(endDate!)
+                                )
+                                .font(.system(size: 15, weight: .semibold))
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding()
+                            .background(
+                                !selectingStartDate
+                                ? Color.pink.opacity(0.15)
+                                : Color.gray.opacity(0.1)
+                            )
+                            .cornerRadius(12)
                         }
                     }
+                    .padding(.horizontal)
                     
-                    // Yearly calendar stays at the far right
-                    HStack {
-                        Spacer()
+                    
+                    // MARK: Calendar
+                    
+                    VStack(spacing: 10) {
                         
-                        NavigationLink {
-                            YearlyCalendarView(
-                                periodDates: $periodDates
-                            )
-                        } label: {
-                            Image(systemName: "26.calendar")
-                                .font(.system(size: 16, weight: .semibold))
-                        }
-                    }
-                    .padding(.trailing, 20)
-                }
-              
-                
-                
-                // MARK: Start / End Selection
-                
-                HStack(spacing: 12) {
-                    
-                    Button {
-                        selectingStartDate = true
-                    } label: {
-                        VStack(alignment: .leading) {
-                            Text("Start Period")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                            
-                            Text(
-                                startDate == nil
-                                ? "Select date"
-                                : formattedDate(startDate!)
-                            )
-                            .font(.system(size: 15, weight: .semibold))
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding()
-                        .background(
-                            selectingStartDate
-                            ? Color.pink.opacity(0.15)
-                            : Color.gray.opacity(0.1)
-                        )
-                        .cornerRadius(12)
-                    }
-                    
-                    
-                    Button {
-                        selectingStartDate = false
-                    } label: {
-                        VStack(alignment: .leading) {
-                            Text("End Period")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                            
-                            Text(
-                                endDate == nil
-                                ? "Select date"
-                                : formattedDate(endDate!)
-                            )
-                            .font(.system(size: 15, weight: .semibold))
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding()
-                        .background(
-                            !selectingStartDate
-                            ? Color.pink.opacity(0.15)
-                            : Color.gray.opacity(0.1)
-                        )
-                        .cornerRadius(12)
-                    }
-                }
-                .padding(.horizontal)
-                
-                
-                // MARK: Calendar
-                
-                VStack(spacing: 10) {
-                    
-                    // Weekday names
-                    
-                    HStack {
-                        ForEach(
-                            calendar.shortWeekdaySymbols,
-                            id: \.self
-                        ) { day in
-                            
-                            Text(day)
-                                .font(.system(size: 12, weight: .semibold))
-                                .frame(maxWidth: .infinity)
-                                .foregroundColor(.gray)
-                        }
-                    }
-                    
-                    
-                    // Calendar dates
-                    
-                    let days = generateDays(for: currentMonth)
-                    
-                    LazyVGrid(
-                        columns: Array(
-                            repeating: GridItem(.flexible()),
-                            count: 7
-                        ),
-                        spacing: 10
-                    ) {
+                        // Weekday names
                         
-                        ForEach(days.indices, id: \.self) { index in
+                        HStack {
+                            ForEach(
+                                calendar.shortWeekdaySymbols,
+                                id: \.self
+                            ) { day in
+                                
+                                Text(day)
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .frame(maxWidth: .infinity)
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        
+                        
+                        // Calendar dates
+                        
+                        let days = generateDays(for: currentMonth)
+                        
+                        LazyVGrid(
+                            columns: Array(
+                                repeating: GridItem(.flexible()),
+                                count: 7
+                            ),
+                            spacing: 10
+                        ) {
                             
-                            if let date = days[index] {
+                            ForEach(days.indices, id: \.self) { index in
                                 
-                                dayView(for: date)
-                                
-                            } else {
-                                
-                                Color.clear
-                                    .frame(height: 40)
+                                if let date = days[index] {
+                                    
+                                    dayView(for: date)
+                                    
+                                } else {
+                                    
+                                    Color.clear
+                                        .frame(height: 40)
+                                }
                             }
                         }
                     }
-                }
-                .padding(.horizontal)
-                
-                
-                // MARK: Reset
-                
-                if !periodDates.isEmpty {
+                    .padding(.horizontal)
                     
-                    Button {
-                        resetPeriod()
-                    } label: {
-                        Text("Reset")
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(.pink)
+                    
+                    // MARK: Reset
+                    
+                    if !periodDates.isEmpty {
+                        
+                        Button {
+                            resetPeriod()
+                        } label: {
+                            Text("Reset")
+                                .font(.system(size: 15, weight: .semibold))
+                                .foregroundColor(.pink)
+                        }
                     }
-                }
-                
-                
-                // MARK: Period Information
-                
-                let currentMonthPeriodDays = periodDates.filter { date in
-                    calendar.isDate(
-                        date,
-                        equalTo: currentMonth,
-                        toGranularity: .month
-                    )
-                }
-                
-                VStack(spacing: 5) {
                     
-                    Text("Period Recorded")
-                        .font(.headline)
                     
-                    if currentMonthPeriodDays.isEmpty {
-                        
-                        Text("No period recorded")
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundColor(.gray)
-                        
-                    } else {
-                        
-                        Text("\(currentMonthPeriodDays.count) day\(currentMonthPeriodDays.count == 1 ? "" : "s")")
-                            .font(.system(size: 28, weight: .bold))
-                            .foregroundColor(.pink)
+                    // MARK: Period Information
+                    
+                    // MARK: - Period Information
+                    
+                    let currentMonthPeriodDays = periodDates.filter { date in
+                        calendar.isDate(
+                            date,
+                            equalTo: currentMonth,
+                            toGranularity: .month
+                        )
                     }
+                    
+                    VStack(spacing: 16) {
+                        
+                        VStack(spacing: 5) {
+                            
+                            Text("Period Recorded")
+                                .font(.headline)
+                            
+                            if currentMonthPeriodDays.isEmpty {
+                                
+                                Text("No period recorded")
+                                    .font(.system(size: 18, weight: .semibold))
+                                    .foregroundColor(.gray)
+                                
+                            } else {
+                                
+                                Text("\(currentMonthPeriodDays.count) day\(currentMonthPeriodDays.count == 1 ? "" : "s")")
+                                    .font(.system(size: 28, weight: .bold))
+                                    .foregroundColor(.pink)
+                            }
+                        }
+                        
+                        // MARK: - Health Summary
+                        
+                        HealthSummaryView(
+                            currentCycleLength: currentCycleLength,
+                            previousCycleLength: previousCycleLength,
+                            currentPeriodDays: latestPeriodDays,
+                            previousPeriodDays: previousPeriodDays,
+                            cycleComparison: cycleComparison,
+                            cyclePattern: cyclePattern
+                        )
+                    }
+                    .padding(.horizontal)
                 }
-                .padding()
+                .padding(.top)
+                .offset(y: -0)
             }
-            .padding(.top)
-            .offset(y: -90)
         }
     }
     
     
     // MARK: - Day View
-
+    
     @ViewBuilder
     private func dayView(for date: Date) -> some View {
         
@@ -301,7 +396,7 @@ struct CalendarView: View {
     }
     
     // MARK: - Select Date
-
+    
     private func selectDate(_ date: Date) {
         
         let selectedDate = calendar.startOfDay(for: date)
@@ -371,7 +466,9 @@ struct CalendarView: View {
         while currentDate <= end {
             
             periodDates.insert(
-                calendar.startOfDay(for: currentDate)
+                calendar.startOfDay(
+                    for: currentDate
+                )
             )
             
             guard let nextDate = calendar.date(
@@ -383,6 +480,20 @@ struct CalendarView: View {
             }
             
             currentDate = nextDate
+        }
+        
+        savePeriodDates()
+    }
+    private func savePeriodDates() {
+        
+        let dates = Array(periodDates)
+        
+        if let encoded = try? JSONEncoder().encode(dates) {
+            
+            UserDefaults.standard.set(
+                encoded,
+                forKey: "savedPeriodDates"
+            )
         }
     }
     
@@ -469,7 +580,7 @@ struct CalendarView: View {
         
         return days
     }
-        
+    
     
     // MARK: - Change Month
     
@@ -485,7 +596,7 @@ struct CalendarView: View {
     }
     
     // MARK: - Check if Month is Future
-
+    
     private func isFutureMonth(_ date: Date) -> Bool {
         
         let today = Date()
@@ -555,21 +666,22 @@ struct CalendarView: View {
     
     private func resetPeriod() {
         
-        // Remove ALL recorded period dates
-        
         periodDates.removeAll()
-        
-        // Reset current selection
         
         startDate = nil
         endDate = nil
         selectingStartDate = true
+        
+        UserDefaults.standard.removeObject (
+            forKey: "savedPeriodDates"
+        )
     }
 }
+    
+    // MARK: - Preview
+    
+    #Preview {
+        CalendarView()
+    }
+    
 
-
-// MARK: - Preview
-
-#Preview {
-    CalendarView()
-}
