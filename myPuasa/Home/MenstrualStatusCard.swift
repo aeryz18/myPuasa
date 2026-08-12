@@ -12,7 +12,7 @@ struct MenstrualStatusCard: View {
     
     var body: some View {
         NavigationLink {
-            PeriodView()
+            CalendarView()
         } label: {
             HStack(spacing: 14) {
                 ZStack {
