@@ -32,8 +32,8 @@ struct HomeView: View {
                         )
                         
                         FastingProgressCard(
-                            completedDays: 7,
-                            totalDays: 14,
+                            completedDays: 2,
+                            totalDays: 3,
                             boxColor: boxColor,
                             borderColor: borderColor,
                             highlightColor: highlightColor

@@ -27,7 +27,7 @@ struct ContentView: View {
                     Label("Fasting", systemImage: "moon.fill")
                 }
 
-            FidyahView()
+            FidyahCalView()
                 .tabItem {
                     Label("Fidyah", systemImage: "book.closed.fill")
                 }

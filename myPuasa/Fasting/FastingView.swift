@@ -6,84 +6,151 @@
 import SwiftUI
 
 struct FastingView: View {
-    // MARK: - Colors
-    private let burgundy = Color(red: 0.45, green: 0.03, blue: 0.15)
-    private let cream = Color(red: 0.91, green: 0.88, blue: 0.82)
+    // Custom Color Palette (Identical to HomeView)
+    private let backgroundColor = Color(red: 250 / 255, green: 248 / 255, blue: 245 / 255)
+    private let boxColor = Color(red: 237 / 255, green: 231 / 255, blue: 223 / 255)
+    private let borderColor = Color(red: 221 / 255, green: 212 / 255, blue: 200 / 255)
+    private let highlightColor = Color(red: 123 / 255, green: 45 / 255, blue: 63 / 255)
     
     // MARK: - State
-    @State private var fast1 = true
-    @State private var fast2 = true
-    @State private var fast3 = false
+    @State private var missedFasts: [MissedFastItem] = [
+        MissedFastItem(dateString: "2 Jan 2025", note: "Ramadan 1446", isCompleted: true),
+        MissedFastItem(dateString: "2 Feb 2025", note: "Ramadan 1446", isCompleted: true),
+        MissedFastItem(dateString: "2 Mac 2025", note: "Ramadan 1446", isCompleted: false)
+    ]
+    
     @State private var showAddFast = false
+    @State private var showCongratulations = false
     
     private var completedCount: Int {
-        (fast1 ? 1 : 0) + (fast2 ? 1 : 0) + (fast3 ? 1 : 0)
+        missedFasts.filter { $0.isCompleted }.count
     }
     
     var body: some View {
-        VStack {
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 20) {
-                    // Circular Progress View Component
-                    FastingProgressCircle(completedDays: completedCount, totalDays: 3)
-                    
-                    // Missed Fast List Header
-                    HStack {
-                        Text("Missed Fast List")
-                            .font(.system(size: 25, weight: .bold))
-                        Spacer()
-                    }
-                    
-                    // Reusable Fast List Rows
-                    VStack(spacing: 0) {
-                        MissedFastRow(date: "2 Jan 2025", isCompleted: $fast1)
-                        Divider()
-                        MissedFastRow(date: "2 Feb 2025", isCompleted: $fast2)
-                        Divider()
-                        MissedFastRow(date: "2 Mac 2025", isCompleted: $fast3)
-                    }
-                    .padding(.horizontal, 12)
-                    .background(cream)
-                    .cornerRadius(18)
-                    
-                    // Status Summary Indicator
-                    HStack(spacing: 12) {
-                        Text("Click to Update")
-                            .font(.system(size: 23, weight: .bold))
-                        
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 38))
-                            .foregroundColor(.green)
-                        
-                        Spacer()
-                    }
-                    
-                    // Add Missed Fast Button
-                    Button {
-                        showAddFast = true
-                    } label: {
+        NavigationStack {
+            ZStack {
+                backgroundColor
+                    .ignoresSafeArea()
+                
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 18) {
+                        // Header Title
                         HStack {
-                            Text("+ Add missed Fast")
-                                .font(.system(size: 18))
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("Fasting Tracker")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.primary)
+                                Text("Log and complete your Qada' fasts")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            }
                             Spacer()
                         }
-                        .foregroundColor(.black)
-                        .padding(.horizontal, 15)
-                        .frame(height: 65)
-                        .background(cream)
-                        .cornerRadius(15)
+                        .padding(.top, 6)
+                        
+                        // Fasting Progress Card Container
+                        VStack(spacing: 16) {
+                            FastingProgressCircle(completedDays: completedCount, totalDays: missedFasts.count)
+                            
+                            Text("\(missedFasts.count - completedCount) Days Remaining")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .foregroundColor(highlightColor)
+                        }
+                        .padding(20)
+                        .frame(maxWidth: .infinity)
+                        .background(boxColor)
+                        .clipShape(RoundedRectangle(cornerRadius: 22))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 22)
+                                .stroke(borderColor, lineWidth: 1)
+                        )
+                        
+                        // Missed Fast List Card
+                        VStack(spacing: 12) {
+                            HStack {
+                                Text("Missed Fast List")
+                                    .font(.headline)
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                Text("\(completedCount)/\(missedFasts.count) Done")
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(highlightColor)
+                            }
+                            
+                            VStack(spacing: 0) {
+                                ForEach($missedFasts) { $fast in
+                                    MissedFastRow(date: fast.dateString, isCompleted: $fast.isCompleted) {
+                                        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                                            showCongratulations = true
+                                        }
+                                    }
+                                    
+                                    if fast.id != missedFasts.last?.id {
+                                        Divider()
+                                            .background(borderColor)
+                                    }
+                                }
+                            }
+                            .background(Color.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .stroke(borderColor, lineWidth: 1)
+                            )
+                        }
+                        .padding(16)
+                        .background(boxColor)
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(borderColor, lineWidth: 1)
+                        )
+                        
+                        // Add Missed Fast Button (Capsule CTA)
+                        Button {
+                            showAddFast = true
+                        } label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: "plus.circle.fill")
+                                    .font(.subheadline)
+                                Text("Add Missed Fast")
+                                    .font(.subheadline)
+                                    .fontWeight(.bold)
+                            }
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(highlightColor)
+                            .clipShape(Capsule())
+                        }
+                        .padding(.top, 4)
                     }
-                    
-                    Spacer()
-                        .frame(height: 30)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 24)
                 }
-                .padding(.horizontal, 15)
-                .padding(.top, 25)
+                
+                // Congratulations Celebration Popup Overlay
+                if showCongratulations {
+                    CongratulationsPopupView(isPresented: $showCongratulations)
+                        .transition(.opacity)
+                        .zIndex(10)
+                }
             }
         }
-        .background(Color.white)
         .sheet(isPresented: $showAddFast) {
-            AddFastView()
+            AddFastView { count, ramadan, note in
+                for i in 1...max(1, count) {
+                    let item = MissedFastItem(
+                        dateString: count > 1 ? "\(ramadan) (Fast #\(i))" : ramadan,
+                        note: note.isEmpty ? nil : note,
+                        isCompleted: false
+                    )
+                    missedFasts.append(item)
+                }
+            }
         }
     }
 }
@@ -91,3 +158,4 @@ struct FastingView: View {
 #Preview {
     FastingView()
 }
+

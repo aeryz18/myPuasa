@@ -27,10 +27,10 @@ struct HomeHeaderView: View {
         ZStack {
             // 1. Background Image
             HStack {
-                Image("image2")
+                Image("image3")
                     .resizable()         // MUST be called first to allow resizing
                     .scaledToFill()      // Use Fill so it covers the whole frame area without white space
-                    .frame(height: 250)
+                    .frame(height: 300)
                     .opacity(0.4)
                     .clipped()
             }
