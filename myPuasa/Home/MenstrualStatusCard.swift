@@ -66,3 +66,4 @@ struct MenstrualStatusCard: View {
         highlightColor: Color(red: 123 / 255, green: 45 / 255, blue: 63 / 255)
     )
 }
+

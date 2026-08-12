@@ -21,29 +21,10 @@ struct HomeView: View {
                 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 16) {
-                        // Header / Greeting Section
-                        HStack {
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text("Welcome back, Harith 👋")
-                                    .font(.title2)
-                                    .fontWeight(.bold)
-                                    .padding(.top,4)
-                                    .foregroundColor(.primary)
-                                Text("Track & manage your fasting journey")
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                            }
-                            Spacer()
-                        }
-                        .padding(.top, 6)
+                        // Header / Greeting & Integrated Calendar Section
+                        HomeHeaderView(userName: "Balqis")
                         
-                        // Separated Cards
-                        IslamicCalendarCard(
-                            boxColor: boxColor,
-                            borderColor: borderColor,
-                            highlightColor: highlightColor
-                        )
-                        
+                        // Separated Feature Cards
                         MenstrualStatusCard(
                             boxColor: boxColor,
                             borderColor: borderColor,
@@ -51,8 +32,8 @@ struct HomeView: View {
                         )
                         
                         FastingProgressCard(
-                            completedDays: 7,
-                            totalDays: 14,
+                            completedDays: 2,
+                            totalDays: 3,
                             boxColor: boxColor,
                             borderColor: borderColor,
                             highlightColor: highlightColor
@@ -75,3 +56,4 @@ struct HomeView: View {
 #Preview {
     HomeView()
 }
+
