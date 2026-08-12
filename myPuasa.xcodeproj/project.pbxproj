@@ -6,7 +6,14 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		19E337D1302B5E6800A9E4AC /* profile1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E337CE302B5E6800A9E4AC /* profile1.swift */; };
+		19E337D5302B5E6800A9E4AC /* profile2CardDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E337CF302B5E6800A9E4AC /* profile2CardDetail.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		19E337CE302B5E6800A9E4AC /* profile1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = profile1.swift; sourceTree = "<group>"; };
+		19E337CF302B5E6800A9E4AC /* profile2CardDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = profile2CardDetail.swift; sourceTree = "<group>"; };
 		38005851302852B0002A508B /* myPuasa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = myPuasa.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -34,6 +41,8 @@
 			children = (
 				38005853302852B0002A508B /* myPuasa */,
 				38005852302852B0002A508B /* Products */,
+				19E337CE302B5E6800A9E4AC /* profile1.swift */,
+				19E337CF302B5E6800A9E4AC /* profile2CardDetail.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -119,6 +128,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				19E337D1302B5E6800A9E4AC /* profile1.swift in Sources */,
+				19E337D5302B5E6800A9E4AC /* profile2CardDetail.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
