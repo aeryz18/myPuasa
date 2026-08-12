@@ -19,6 +19,7 @@ struct AddFastView: View {
         "Ramadan 1446 (2024)",
         "Ramadan 1445 (2023)",
         "Ramadan 1444 (2022)"
+        
     ]
     
     private let backgroundColor = Color(red: 250 / 255, green: 248 / 255, blue: 245 / 255)

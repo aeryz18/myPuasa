@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct HomeView: View {
+    @ObservedObject var fastingStore = FastingStore.shared
+    
     private let backgroundColor = Color(red: 250 / 255, green: 248 / 255, blue: 245 / 255)
     private let boxColor = Color(red: 237 / 255, green: 231 / 255, blue: 223 / 255)
     private let borderColor = Color(red: 221 / 255, green: 212 / 255, blue: 200 / 255)
@@ -32,8 +34,8 @@ struct HomeView: View {
                         )
                         
                         FastingProgressCard(
-                            completedDays: 2,
-                            totalDays: 3,
+                            completedDays: fastingStore.completedCount,
+                            totalDays: fastingStore.totalCount,
                             boxColor: boxColor,
                             borderColor: borderColor,
                             highlightColor: highlightColor
@@ -56,4 +58,5 @@ struct HomeView: View {
 #Preview {
     HomeView()
 }
+
 

@@ -6,6 +6,8 @@
 import SwiftUI
 
 struct FastingView: View {
+    @ObservedObject var fastingStore = FastingStore.shared
+    
     // Custom Color Palette (Identical to HomeView)
     private let backgroundColor = Color(red: 250 / 255, green: 248 / 255, blue: 245 / 255)
     private let boxColor = Color(red: 237 / 255, green: 231 / 255, blue: 223 / 255)
@@ -13,18 +15,8 @@ struct FastingView: View {
     private let highlightColor = Color(red: 123 / 255, green: 45 / 255, blue: 63 / 255)
     
     // MARK: - State
-    @State private var missedFasts: [MissedFastItem] = [
-        MissedFastItem(dateString: "2 Jan 2025", note: "Ramadan 1446", isCompleted: true),
-        MissedFastItem(dateString: "2 Feb 2025", note: "Ramadan 1446", isCompleted: true),
-        MissedFastItem(dateString: "2 Mac 2025", note: "Ramadan 1446", isCompleted: false)
-    ]
-    
     @State private var showAddFast = false
     @State private var showCongratulations = false
-    
-    private var completedCount: Int {
-        missedFasts.filter { $0.isCompleted }.count
-    }
     
     var body: some View {
         NavigationStack {
@@ -51,9 +43,9 @@ struct FastingView: View {
                         
                         // Fasting Progress Card Container
                         VStack(spacing: 16) {
-                            FastingProgressCircle(completedDays: completedCount, totalDays: missedFasts.count)
+                            FastingProgressCircle(completedDays: fastingStore.completedCount, totalDays: fastingStore.totalCount)
                             
-                            Text("\(missedFasts.count - completedCount) Days Remaining")
+                            Text("\(fastingStore.totalCount - fastingStore.completedCount) Days Remaining")
                                 .font(.subheadline)
                                 .fontWeight(.semibold)
                                 .foregroundColor(highlightColor)
@@ -74,21 +66,21 @@ struct FastingView: View {
                                     .font(.headline)
                                     .foregroundColor(.primary)
                                 Spacer()
-                                Text("\(completedCount)/\(missedFasts.count) Done")
+                                Text("\(fastingStore.completedCount)/\(fastingStore.totalCount) Done")
                                     .font(.caption)
                                     .fontWeight(.semibold)
                                     .foregroundColor(highlightColor)
                             }
                             
                             VStack(spacing: 0) {
-                                ForEach($missedFasts) { $fast in
+                                ForEach($fastingStore.missedFasts) { $fast in
                                     MissedFastRow(date: fast.dateString, isCompleted: $fast.isCompleted) {
                                         withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                                             showCongratulations = true
                                         }
                                     }
                                     
-                                    if fast.id != missedFasts.last?.id {
+                                    if fast.id != fastingStore.missedFasts.last?.id {
                                         Divider()
                                             .background(borderColor)
                                     }
@@ -142,14 +134,7 @@ struct FastingView: View {
         }
         .sheet(isPresented: $showAddFast) {
             AddFastView { count, ramadan, note in
-                for i in 1...max(1, count) {
-                    let item = MissedFastItem(
-                        dateString: count > 1 ? "\(ramadan) (Fast #\(i))" : ramadan,
-                        note: note.isEmpty ? nil : note,
-                        isCompleted: false
-                    )
-                    missedFasts.append(item)
-                }
+                fastingStore.addMissedFasts(count: count, ramadan: ramadan, note: note)
             }
         }
     }
@@ -158,4 +143,5 @@ struct FastingView: View {
 #Preview {
     FastingView()
 }
+
 
