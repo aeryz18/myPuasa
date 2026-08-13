@@ -95,7 +95,7 @@ struct FastingListView: View {
                                     HStack(spacing: 8) {
                                         Image(systemName: "calendar")
                                             .foregroundColor(highlightColor)
-                                        Text("Ramadan \(group.year)")
+                                        Text("Ramadan \(String(group.year))")
                                             .font(.headline)
                                             .fontWeight(.bold)
                                             .foregroundColor(.primary)

@@ -405,7 +405,7 @@ struct FidyahYearCard: View {
                     Array((2015...currentYr).reversed()),
                     id: \.self
                 ) { year in
-                    Text("\(year)")
+                    Text(String(year))
                         .tag(year)
                 }
             }

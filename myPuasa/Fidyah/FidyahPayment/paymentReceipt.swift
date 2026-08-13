@@ -81,6 +81,8 @@ struct paymentReceipt: View {
     var daysPaid: Int = 1
     let paymentMethod: String
     let stateName: String
+    var onDone: (() -> Void)? = nil
+    var onFinishAndGoToHistory: (() -> Void)? = nil
     
     @Environment(\.dismiss) private var dismiss
     @AppStorage("selectedTab") private var selectedTab: Int = 0
@@ -158,7 +160,11 @@ struct paymentReceipt: View {
                 VStack(spacing: 12) {
                     // Button 1: Fidyah Record History
                     Button {
-                        navigateToRecords = true
+                        if let onFinishAndGoToHistory = onFinishAndGoToHistory {
+                            onFinishAndGoToHistory()
+                        } else {
+                            navigateToRecords = true
+                        }
                     } label: {
                         HStack(spacing: 8) {
                             Image(systemName: "clock.arrow.circlepath")
@@ -172,10 +178,14 @@ struct paymentReceipt: View {
                         .clipShape(Capsule())
                     }
                     
-                    // Button 2: Done -> Redirect to Home Page
+                    // Button 2: Done -> Redirect to Home Page & Dismiss Sheet
                     Button {
                         selectedTab = 0
-                        dismiss()
+                        if let onDone = onDone {
+                            onDone()
+                        } else {
+                            dismiss()
+                        }
                     } label: {
                         Text("Done")
                             .font(.system(size: 16, weight: .bold))

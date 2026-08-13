@@ -14,6 +14,7 @@ struct FidyahCalView: View {
     @State private var stateExpanded = false
     @State private var reasonExpanded = false
     @State private var showPayment = false
+    @State private var showRecords = false
 
 
     var body: some View {
@@ -320,11 +321,10 @@ struct FidyahCalView: View {
                     )
                     
                     
-                    HStack(
+                     HStack(
                         alignment: .top,
                         spacing: 12
                     ) {
-                        
                         FidyahYearCard(
                             year: $vm.selectedYear
                         )
@@ -333,9 +333,19 @@ struct FidyahCalView: View {
                             days: $vm.numberOfDays
                         )
                     }
+                    .disabled(vm.linkToTracker)
+                    .opacity(vm.linkToTracker ? 0.5 : 1.0)
                     
-                    
-                   
+                    if vm.linkToTracker {
+                        HStack(spacing: 6) {
+                            Image(systemName: "lock.fill")
+                                .font(.system(size: 11))
+                            Text("Manual entry disabled while tracker sync is active.")
+                                .font(.system(size: 11, weight: .medium))
+                        }
+                        .foregroundColor(FidyahTheme.secondaryText)
+                        .padding(.horizontal, 4)
+                    }
                     
                     Toggle(
                         isOn: $vm.linkToTracker
@@ -381,21 +391,16 @@ struct FidyahCalView: View {
                         }
                     }
                     
-                    
-                    
-                    
                     FidyahPrimaryButton(
                         title: "Add to Summary",
                         disabled:
-                            vm.numberOfDays <= 0
+                            vm.numberOfDays <= 0 || vm.linkToTracker
                     ) {
-                        
                         withAnimation(
                             .spring(
                                 response: 0.35
                             )
                         ) {
-                            
                             vm.addRecord()
                         }
                     }
@@ -420,7 +425,7 @@ struct FidyahCalView: View {
                                 Spacer()
                                 Text("Days")
                                 Spacer()
-                                Text("Gandaan")
+                                Text("Multiplication")
                                 Spacer()
                                 Text("Rate")
                                 Spacer()
@@ -447,7 +452,7 @@ struct FidyahCalView: View {
                                 HStack {
                                     
                                     Text(
-                                        "\(item.year)"
+                                        String(item.year)
                                     )
                                     
                                     Spacer()
@@ -569,8 +574,20 @@ struct FidyahCalView: View {
                     stateName: vm.selectedState.name,
                     rate: vm.currentRate,
                     days: vm.summaryItems.isEmpty ? vm.numberOfDays : vm.summaryItems.reduce(0) { $0 + $1.days },
-                    totalAmount: vm.summaryItems.isEmpty ? vm.currentAmount : vm.grandTotal
+                    totalAmount: vm.summaryItems.isEmpty ? vm.currentAmount : vm.grandTotal,
+                    onDone: {
+                        showPayment = false
+                    },
+                    onFinishAndGoToHistory: {
+                        showPayment = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                            showRecords = true
+                        }
+                    }
                 )
+            }
+            .navigationDestination(isPresented: $showRecords) {
+                FidyahRecordsView()
             }
             .onAppear {
                 if vm.linkToTracker {

@@ -12,6 +12,8 @@ struct paymentView: View {
     let rate: Double
     let days: Int
     let totalAmount: Double
+    var onDone: (() -> Void)? = nil
+    var onFinishAndGoToHistory: (() -> Void)? = nil
 
     @State private var selectedMethod: PaymentMethod = .onlineBanking
     @State private var showReceipt = false
@@ -87,14 +89,14 @@ struct paymentView: View {
                     }
                     .buttonStyle(.plain)
 
-                    // TnG eWallet
+                    // Credit/Debit Card
                     Button {
-                        selectedMethod = .tng
+                        selectedMethod = .card
                     } label: {
                         paymentMethodRow(
-                            icon: "wallet.pass.fill",
-                            title: "TnG eWallet",
-                            isSelected: selectedMethod == .tng
+                            icon: "creditcard.fill",
+                            title: "Credit/Debit Card",
+                            isSelected: selectedMethod == .card
                         )
                     }
                     .buttonStyle(.plain)
@@ -135,7 +137,9 @@ struct paymentView: View {
                     amountPaid: totalAmount,
                     daysPaid: days,
                     paymentMethod: selectedMethodName,
-                    stateName: stateName
+                    stateName: stateName,
+                    onDone: onDone,
+                    onFinishAndGoToHistory: onFinishAndGoToHistory
                 )
                 .navigationBarBackButtonHidden(true)
             }
@@ -164,4 +168,3 @@ struct paymentView: View {
 #Preview {
     paymentView(stateName: "Selangor", rate: 7.00, days: 5, totalAmount: 35.00)
 }
-
