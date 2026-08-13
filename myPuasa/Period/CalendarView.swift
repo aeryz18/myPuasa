@@ -10,10 +10,8 @@ struct CalendarView: View {
     @State private var startDate: Date? = nil
     @State private var endDate: Date? = nil
     
-    // Stores ALL period dates from ALL months
-    @AppStorage("savedPeriodDates") private var savedPeriodDates: Data = Data()
-    
-    @State private var periodDates: Set<Date> = []
+    // Stores ALL period dates from UserStore
+    @State private var periodDates: Set<Date> = Set(UserStore.shared.currentUser.periodDates)
     
     @State private var selectingStartDate = true
     @State private var isTrackingActive = false
@@ -581,16 +579,7 @@ struct CalendarView: View {
         savePeriodDates()
     }
     private func savePeriodDates() {
-        
-        let dates = Array(periodDates)
-        
-        if let encoded = try? JSONEncoder().encode(dates) {
-            
-            UserDefaults.standard.set(
-                encoded,
-                forKey: "savedPeriodDates"
-            )
-        }
+        UserStore.shared.currentUser.periodDates = Array(periodDates)
     }
     
     
@@ -761,16 +750,11 @@ struct CalendarView: View {
     // MARK: - Reset
     
     private func resetPeriod() {
-        
         periodDates.removeAll()
-        
         startDate = nil
         endDate = nil
         selectingStartDate = true
-        
-        UserDefaults.standard.removeObject (
-            forKey: "savedPeriodDates"
-        )
+        UserStore.shared.currentUser.periodDates = []
     }
 }
     

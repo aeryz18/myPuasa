@@ -8,6 +8,13 @@
 import SwiftUI
 
 struct passwordPage: View {
+    var draftName: String = "New User"
+    var draftPhone: String = ""
+    var draftEmail: String = "user@mypuasa.com"
+    var draftGender: String = "Female"
+    var draftState: String = "Selangor"
+    
+    @AppStorage("selectedTab") private var selectedTab: Int = 0
     @State private var passwordOri = ""
     @State private var passwordNew = ""
     @State private var showMismatch = false
@@ -68,7 +75,7 @@ struct passwordPage: View {
                             .overlay(RoundedRectangle(cornerRadius: 16).stroke(borderColor, lineWidth: 1))
                         }
                         
-                        // Create Account → directly back to login page
+                        // Create Account → saves User struct and goes back to login page
                         NavigationLink {
                             loginPage()
                                 .navigationBarBackButtonHidden(true)
@@ -81,6 +88,24 @@ struct passwordPage: View {
                                 .background(highlightColor)
                                 .clipShape(Capsule())
                         }
+                        .simultaneousGesture(TapGesture().onEnded {
+                            selectedTab = 0
+                            let newUser = User(
+                                name: draftName,
+                                phone: draftPhone,
+                                email: draftEmail,
+                                password: passwordOri.isEmpty ? "123" : passwordOri,
+                                gender: draftGender,
+                                state: draftState,
+                                partnerName: nil,
+                                partnerPhone: nil,
+                                hasPartner: false,
+                                missedFasts: [],
+                                periodDates: [],
+                                fidyahRecords: []
+                            )
+                            UserStore.shared.switchUser(newUser)
+                        })
                     }
                     .padding(24)
                     .background(cardColor)

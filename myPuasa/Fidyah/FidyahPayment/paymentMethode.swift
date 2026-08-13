@@ -14,7 +14,7 @@
 
             case onlineBanking
             case tng
-            case duitNow
+            case applePay
             case card
 
             var id: String {
@@ -31,8 +31,8 @@
                 case .tng:
                     return "TnG eWallet"
 
-                case .duitNow:
-                    return "QR DuitNow"
+                case .applePay:
+                    return "Apple Pay"
 
                 case .card:
                     return "Credit/Debit Card"
@@ -49,8 +49,8 @@
                 case .tng:
                     return "Touch 'n Go eWallet"
 
-                case .duitNow:
-                    return "Scan QR to pay"
+                case .applePay:
+                    return "Pay with Apple Pay"
 
                 case .card:
                     return "Visa / Mastercard"
@@ -67,8 +67,8 @@
                 case .tng:
                     return "wallet.pass.fill"
 
-                case .duitNow:
-                    return "qrcode"
+                case .applePay:
+                    return "apple.logo"
 
                 case .card:
                     return "creditcard.fill"

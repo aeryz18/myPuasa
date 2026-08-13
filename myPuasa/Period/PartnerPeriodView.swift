@@ -6,10 +6,6 @@
 import SwiftUI
 
 struct PartnerPeriodView: View {
-    @AppStorage("partnerName") private var partnerName: String = ""
-    @AppStorage("partnerPhone") private var partnerPhone: String = ""
-    @AppStorage("savedPeriodDates") private var savedPeriodDates: Data = Data()
-    
     @State private var periodDates: Set<Date> = []
     @State private var currentMonth = Date()
     
@@ -36,8 +32,8 @@ struct PartnerPeriodView: View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(partnerName.isEmpty ? "Partner" : partnerName)
                                 .font(.headline).fontWeight(.bold)
-                            if !partnerPhone.isEmpty {
-                                Text(partnerPhone).font(.caption).foregroundColor(.secondary)
+                            if !partnerEmail.isEmpty {
+                                Text(partnerEmail).font(.caption).foregroundColor(.secondary)
                             }
                             Label("Read-only view", systemImage: "eye.fill")
                                 .font(.caption2).foregroundColor(highlightColor)
@@ -155,10 +151,18 @@ struct PartnerPeriodView: View {
         .frame(height: 40)
     }
     
+    private var partnerName: String {
+        UserStore.shared.currentUser.partnerName ?? "Partner"
+    }
+    
+    private var partnerEmail: String {
+        UserStore.shared.currentUser.partnerEmail ?? ""
+    }
+    
     private func loadDates() {
-        if let decoded = try? JSONDecoder().decode([Date].self, from: savedPeriodDates) {
-            periodDates = Set(decoded)
-        }
+        // Read period dates from female partner profile (demoFemale) or UserStore
+        let femaleDates = User.demoFemale.periodDates
+        periodDates = Set(femaleDates)
     }
     
     private func generateDays(for month: Date) -> [Date?] {

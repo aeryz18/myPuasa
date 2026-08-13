@@ -400,12 +400,11 @@ struct FidyahYearCard: View {
                 "Year",
                 selection: $year
             ) {
-
+                let currentYr = Calendar.current.component(.year, from: Date())
                 ForEach(
-                    2020...2026,
+                    Array((2015...currentYr).reversed()),
                     id: \.self
                 ) { year in
-
                     Text("\(year)")
                         .tag(year)
                 }
@@ -516,6 +515,7 @@ struct FidyahAmountCard: View {
     let amount: Double
     let days: Int
     let rate: Double
+    var multiplier: Int = 1
 
 
     var body: some View {
@@ -555,13 +555,17 @@ struct FidyahAmountCard: View {
             )
 
 
-            Text(
-                "\(days) day\(days == 1 ? "" : "s") × RM \(rate, specifier: "%.2f")"
-            )
-            .font(.system(size: 13))
-            .foregroundStyle(
-                FidyahTheme.secondaryText
-            )
+            if multiplier > 1 {
+                Text("\(days) day\(days == 1 ? "" : "s") × RM \(rate, specifier: "%.2f") × \(multiplier) yrs (gandaan)")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(FidyahTheme.maroon)
+            } else {
+                Text("\(days) day\(days == 1 ? "" : "s") × RM \(rate, specifier: "%.2f")")
+                    .font(.system(size: 13))
+                    .foregroundStyle(
+                        FidyahTheme.secondaryText
+                    )
+            }
         }
         .padding(20)
         .frame(

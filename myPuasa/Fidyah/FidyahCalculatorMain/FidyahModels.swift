@@ -78,8 +78,9 @@ struct FidyahSummaryItem: Identifiable {
     let year: Int
     let days: Int
     let rate: Double
+    let multiplier: Int
 
     var total: Double {
-        Double(days) * rate
+        Double(days) * rate * Double(multiplier)
     }
 }

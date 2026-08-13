@@ -340,12 +340,10 @@ struct FidyahCalView: View {
                     Toggle(
                         isOn: $vm.linkToTracker
                     ) {
-                        
                         VStack(
                             alignment: .leading,
                             spacing: 3
                         ) {
-                            
                             Text("Link to your tracker")
                                 .font(
                                     .system(
@@ -354,13 +352,19 @@ struct FidyahCalView: View {
                                     )
                                 )
                             
-                            Text(
-                                "Keep this record connected to your fasting tracker."
-                            )
-                            .font(.system(size: 11))
-                            .foregroundStyle(
-                                FidyahTheme.secondaryText
-                            )
+                            if vm.linkToTracker {
+                                Text("Synced: \(vm.syncedFastCount) uncompleted fast(s) from 2025 & prior (2026 excluded)")
+                                    .font(.system(size: 11, weight: .semibold))
+                                    .foregroundStyle(FidyahTheme.maroon)
+                            } else {
+                                Text(
+                                    "Keep this record connected to your fasting tracker."
+                                )
+                                .font(.system(size: 11))
+                                .foregroundStyle(
+                                    FidyahTheme.secondaryText
+                                )
+                            }
                         }
                     }
                     .tint(FidyahTheme.maroon)
@@ -371,6 +375,11 @@ struct FidyahCalView: View {
                             cornerRadius: 18
                         )
                     )
+                    .onChange(of: vm.linkToTracker) { _, newValue in
+                        if newValue {
+                            vm.syncWithFastingTracker()
+                        }
+                    }
                     
                     
                     
@@ -411,6 +420,8 @@ struct FidyahCalView: View {
                                 Spacer()
                                 Text("Days")
                                 Spacer()
+                                Text("Gandaan")
+                                Spacer()
                                 Text("Rate")
                                 Spacer()
                                 Text("Total")
@@ -444,6 +455,14 @@ struct FidyahCalView: View {
                                     Text(
                                         "\(item.days)"
                                     )
+                                    
+                                    Spacer()
+                                    
+                                    Text(
+                                        "\(item.multiplier)x"
+                                    )
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(FidyahTheme.maroon)
                                     
                                     Spacer()
                                     
@@ -517,7 +536,8 @@ struct FidyahCalView: View {
                         : vm.summaryItems.reduce(0) {
                             $0 + $1.days
                         },
-                        rate: vm.currentRate
+                        rate: vm.currentRate,
+                        multiplier: vm.currentMultiplier
                     )
                     
                     
@@ -551,6 +571,11 @@ struct FidyahCalView: View {
                     days: vm.summaryItems.isEmpty ? vm.numberOfDays : vm.summaryItems.reduce(0) { $0 + $1.days },
                     totalAmount: vm.summaryItems.isEmpty ? vm.currentAmount : vm.grandTotal
                 )
+            }
+            .onAppear {
+                if vm.linkToTracker {
+                    vm.syncWithFastingTracker()
+                }
             }
         }
     }

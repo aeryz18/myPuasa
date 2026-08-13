@@ -20,7 +20,7 @@ struct paymentView: View {
         switch selectedMethod {
         case .onlineBanking: return "Online Banking"
         case .tng: return "TnG eWallet"
-        case .duitNow: return "QR DuitNow"
+        case .applePay: return "Apple Pay"
         case .card: return "Credit/Debit Card"
         }
     }
@@ -99,14 +99,14 @@ struct paymentView: View {
                     }
                     .buttonStyle(.plain)
 
-                    // QR DuitNow
+                    // Apple Pay
                     Button {
-                        selectedMethod = .duitNow
+                        selectedMethod = .applePay
                     } label: {
                         paymentMethodRow(
-                            icon: "qrcode",
-                            title: "QR DuitNow",
-                            isSelected: selectedMethod == .duitNow
+                            icon: "apple.logo",
+                            title: "Apple Pay",
+                            isSelected: selectedMethod == .applePay
                         )
                     }
                     .buttonStyle(.plain)
@@ -133,6 +133,7 @@ struct paymentView: View {
             .navigationDestination(isPresented: $showReceipt) {
                 paymentReceipt(
                     amountPaid: totalAmount,
+                    daysPaid: days,
                     paymentMethod: selectedMethodName,
                     stateName: stateName
                 )

@@ -23,6 +23,7 @@ final class FidyahViewModel: ObservableObject {
     @Published var numberOfDays: Int = 1
 
     @Published var linkToTracker: Bool = false
+    @Published var syncedFastCount: Int = 0
 
     
 
@@ -140,11 +141,23 @@ final class FidyahViewModel: ObservableObject {
     }
 
 
+    // MARK: - Compounding Multiplier (Gandaan)
+    
+    var currentYear: Int {
+        Calendar.current.component(.year, from: Date())
+    }
+    
+    var currentMultiplier: Int {
+        if selectedYear >= currentYear {
+            return 1
+        }
+        return max(1, currentYear - selectedYear)
+    }
+
     // MARK: - Current Amount
 
     var currentAmount: Double {
-
-        Double(numberOfDays) * currentRate
+        Double(numberOfDays) * currentRate * Double(currentMultiplier)
     }
 
 
@@ -171,6 +184,10 @@ final class FidyahViewModel: ObservableObject {
 
             selectedRice = firstRice
         }
+        
+        if linkToTracker {
+            syncWithFastingTracker()
+        }
     }
 
 
@@ -184,12 +201,10 @@ final class FidyahViewModel: ObservableObject {
 
 
         let item = FidyahSummaryItem(
-
             year: selectedYear,
-
             days: numberOfDays,
-
-            rate: currentRate
+            rate: currentRate,
+            multiplier: currentMultiplier
         )
 
 
@@ -215,5 +230,45 @@ final class FidyahViewModel: ObservableObject {
     func clearSummary() {
 
         summaryItems.removeAll()
+    }
+    
+    // MARK: - Sync with Fasting Tracker (Past Years Only - 2025 & Prior)
+    
+    func syncWithFastingTracker() {
+        let userFasts = UserStore.shared.currentUser.missedFasts
+        let currYear = Calendar.current.component(.year, from: Date())
+        
+        // Filter ONLY uncompleted fasts from 2025 and prior years (2026 fasts excluded by Fiqh)
+        let pastUncompleted = userFasts.filter { !$0.isCompleted && $0.detectedYear < currYear }
+        let count = pastUncompleted.count
+        
+        self.syncedFastCount = count
+        if count > 0 {
+            self.numberOfDays = count
+            
+            // Group fasts by year
+            var yearCounts: [Int: Int] = [:]
+            for item in pastUncompleted {
+                let yr = item.detectedYear
+                yearCounts[yr, default: 0] += 1
+            }
+            
+            // Auto-populate summaryItems for instant payment readiness!
+            var newItems: [FidyahSummaryItem] = []
+            for (yr, daysCount) in yearCounts.sorted(by: { $0.key > $1.key }) {
+                let mult = max(1, currYear - yr)
+                let summaryItem = FidyahSummaryItem(
+                    year: yr,
+                    days: daysCount,
+                    rate: currentRate,
+                    multiplier: mult
+                )
+                newItems.append(summaryItem)
+            }
+            self.summaryItems = newItems
+        } else {
+            self.numberOfDays = 1
+            self.summaryItems.removeAll()
+        }
     }
 }

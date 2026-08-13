@@ -8,11 +8,6 @@
 import SwiftUI
 
 struct signUpPAge: View {
-    // Saved directly to UserDefaults via @AppStorage
-    @AppStorage("userGender") private var userGender: String = "Female"
-    @AppStorage("userName") private var userName: String = ""
-    @AppStorage("userEmail") private var userEmail: String = ""
-    
     @State private var fullNama = ""
     @State private var nomTel = ""
     @State private var email = ""
@@ -95,9 +90,15 @@ struct signUpPAge: View {
                             }
                         }
                         
-                        // Next — navigates directly without validation restrictions
+                        // Next — navigates to passwordPage with form draft
                         NavigationLink {
-                            passwordPage()
+                            passwordPage(
+                                draftName: fullNama.isEmpty ? "New User" : fullNama,
+                                draftPhone: nomTel,
+                                draftEmail: email.isEmpty ? "user@mypuasa.com" : email,
+                                draftGender: gender,
+                                draftState: negeri.isEmpty ? "Selangor" : negeri
+                            )
                         } label: {
                             Text("Next")
                                 .font(.headline).fontWeight(.bold)
@@ -107,11 +108,6 @@ struct signUpPAge: View {
                                 .background(highlightColor)
                                 .clipShape(Capsule())
                         }
-                        .simultaneousGesture(TapGesture().onEnded {
-                            userName = fullNama.isEmpty ? "User" : fullNama
-                            userEmail = email
-                            userGender = gender
-                        })
                     }
                     .padding(24)
                     .background(cardColor)

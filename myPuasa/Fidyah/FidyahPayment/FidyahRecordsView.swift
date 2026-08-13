@@ -5,8 +5,8 @@
 
 import SwiftUI
 
-struct FidyahRecordItem: Identifiable {
-    let id = UUID()
+struct FidyahRecordItem: Identifiable, Equatable, Codable {
+    var id: UUID = UUID()
     let dateString: String
     let amount: Double
     let days: Int
@@ -22,13 +22,10 @@ struct FidyahRecordsView: View {
     
     private let filterOptions = ["This Year", "All Time", "2024", "2023"]
     
-    // History records matching screenshot layout
-    @State private var records: [FidyahRecordItem] = [
-        FidyahRecordItem(dateString: "25 May 2024", amount: 35.00, days: 10, paymentMethod: "Online Banking", stateName: "Selangor"),
-        FidyahRecordItem(dateString: "12 May 2024", amount: 15.00, days: 5, paymentMethod: "TnG eWallet", stateName: "Wilayah Persekutuan"),
-        FidyahRecordItem(dateString: "10 August 2023", amount: 55.00, days: 15, paymentMethod: "QR DuitNow", stateName: "Johor"),
-        FidyahRecordItem(dateString: "17 September 2022", amount: 35.00, days: 10, paymentMethod: "Credit/Debit Card", stateName: "Kedah")
-    ]
+    // History records read from active user profile
+    private var records: [FidyahRecordItem] {
+        UserStore.shared.currentUser.fidyahRecords
+    }
     
     private var totalPaidThisYear: Double {
         records.prefix(2).reduce(0) { $0 + $1.amount }
@@ -116,31 +113,6 @@ struct FidyahRecordsView: View {
                             )
                         }
                     }
-                    
-                    // Total Paid Summary Card at Bottom
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Total Paid (\(selectedFilter))")
-                            .font(.headline)
-                            .fontWeight(.bold)
-                            .foregroundColor(.primary)
-                        
-                        Text("RM \(totalPaidThisYear, specifier: "%.2f")")
-                            .font(.system(size: 24, weight: .bold))
-                            .foregroundColor(.primary)
-                        
-                        Text("\(totalDaysThisYear) days")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(20)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(FidyahTheme.cream)
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(FidyahTheme.border, lineWidth: 1)
-                    )
-                    .padding(.top, 4)
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 24)

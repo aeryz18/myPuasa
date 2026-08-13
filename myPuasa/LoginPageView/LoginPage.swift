@@ -9,6 +9,9 @@ import SwiftUI
 
 struct loginPage: View {
     @AppStorage("isLoggedIn") private var isLoggedIn: Bool = false
+    @AppStorage("selectedTab") private var selectedTab: Int = 0
+    
+    
     
     @State private var emaiL = ""
     @State private var password = ""
@@ -17,7 +20,6 @@ struct loginPage: View {
     private let borderColor = Color(red: 221 / 255, green: 212 / 255, blue: 200 / 255)
     private let highlightColor = Color(red: 123 / 255, green: 45 / 255, blue: 63 / 255)
     private let cardColor = Color(red: 237 / 255, green: 231 / 255, blue: 223 / 255)
-    @State private var navigateToHome: Bool = false
     
     var body: some View {
         ZStack {
@@ -26,16 +28,27 @@ struct loginPage: View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 28) {
                     
-                    // Header
-                    VStack(spacing: 6) {
-                        Text("Welcome Back")
-                            .font(.system(size: 32, weight: .bold))
-                            .foregroundColor(.primary)
-                        Text("Log in to your account")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                    // App Logo & Header
+                    VStack(spacing: 14) {
+                        Image("AppLogo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 90, height: 90)
+                            .clipShape(RoundedRectangle(cornerRadius: 22))
+                            .shadow(color: highlightColor.opacity(0.35), radius: 12, x: 0, y: 6)
+                        
+                        
+                        VStack(spacing: 4) {
+                            Text("Assalamualaikum")
+                                .font(.system(size: 24, weight: .bold))
+                                .foregroundColor(.primary)
+                                .padding(.top, 5)
+                            Text("Log in to your account")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
                     }
-                    .padding(.top, 60)
+                    .padding(.top, 40)
                     
                     // Form Card
                     VStack(spacing: 20) {
@@ -80,10 +93,25 @@ struct loginPage: View {
                                 .foregroundColor(highlightColor)
                         }
                         
-                        // Login Button — sets isLoggedIn and navigates to ContentView
+                        // Login Button — matches typed credentials to demo user or creates session
                         Button {
+                            let trimmedEmail = emaiL.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+                            
+                            if trimmedEmail.contains("balqis") || trimmedEmail == "balqis@gmail.com" {
+                                UserStore.shared.switchUser(.demoFemale)
+                            } else if trimmedEmail.contains("ahmad") || trimmedEmail == "ahmad@gmail.com" {
+                                UserStore.shared.switchUser(.demoMale)
+                            } else {
+                                var newUser = User.guest
+                                newUser.email = emaiL.isEmpty ? "user@mypuasa.com" : emaiL
+                                newUser.password = password.isEmpty ? "123" : password
+                                let defaultName = emaiL.components(separatedBy: "@").first?.capitalized ?? "User"
+                                newUser.name = defaultName.isEmpty ? "User" : defaultName
+                                UserStore.shared.switchUser(newUser)
+                            }
+                            
+                            selectedTab = 0
                             isLoggedIn = true
-                            navigateToHome = true
                         } label: {
                             Text("Login")
                                 .font(.headline).fontWeight(.bold)
@@ -133,10 +161,6 @@ struct loginPage: View {
             }
         }
         .navigationBarHidden(true)
-        .navigationDestination(isPresented: $navigateToHome) {
-            ContentView()
-                .navigationBarBackButtonHidden(true)
-        }
     }
     
     @ViewBuilder

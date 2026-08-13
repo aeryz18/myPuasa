@@ -44,7 +44,7 @@ struct MenPreView: View {
                         
                         Image(systemName: "drop.fill")
                             .font(.system(size: 54))
-                            .foregroundColor(.black)
+                            .foregroundColor(.white)
                         
                         Spacer()
                         

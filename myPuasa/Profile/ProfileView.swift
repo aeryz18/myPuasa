@@ -7,14 +7,12 @@ import SwiftUI
 
 struct ProfileView: View {
     @AppStorage("isLoggedIn") private var isLoggedIn: Bool = false
-    @AppStorage("userName") private var storedName: String = "Siti Nurul Balqis"
-    @AppStorage("userEmail") private var storedEmail: String = "balqis@gmail.com"
-    @AppStorage("userGender") private var storedGender: String = "Female"
+    @ObservedObject var userStore = UserStore.shared
     
     @State private var isEditing: Bool = false
     
-    @State private var name: String = "Siti Nurul Balqis"
-    @State private var email: String = "balqis@gmail.com"
+    @State private var name: String = ""
+    @State private var email: String = ""
     @State private var gender: String = "Female"
     @State private var selectedState: String = "Selangor"
     
@@ -228,9 +226,7 @@ struct ProfileView: View {
                         // Save Banner indicator when editing
                         if isEditing {
                             Button {
-                                storedName = name
-                                storedEmail = email
-                                storedGender = gender
+                                userStore.updateProfile(name: name, email: email, gender: gender, state: selectedState)
                                 withAnimation {
                                     isEditing = false
                                 }
@@ -297,9 +293,11 @@ struct ProfileView: View {
             }
         }
         .onAppear {
-            name = storedName.isEmpty ? "Siti Nurul Balqis" : storedName
-            email = storedEmail.isEmpty ? "balqis@gmail.com" : storedEmail
-            gender = storedGender.isEmpty ? "Female" : storedGender
+            let u = userStore.currentUser
+            name = u.name
+            email = u.email
+            gender = u.gender
+            selectedState = u.state
         }
     }
 }

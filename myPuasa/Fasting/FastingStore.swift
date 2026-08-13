@@ -9,11 +9,15 @@ import Combine
 class FastingStore: ObservableObject {
     static let shared = FastingStore()
     
-    @Published var missedFasts: [MissedFastItem] = [
-        MissedFastItem(dateString: "2 Jan 2025", note: "Ramadan 1446", isCompleted: true),
-        MissedFastItem(dateString: "2 Feb 2025", note: "Ramadan 1446", isCompleted: true),
-        MissedFastItem(dateString: "2 Mac 2025", note: "Ramadan 1446", isCompleted: false)
-    ]
+    @Published var missedFasts: [MissedFastItem] = []
+    private var cancellables = Set<AnyCancellable>()
+    
+    init() {
+        // Sync with active user's missedFasts
+        UserStore.shared.$currentUser
+            .map { $0.missedFasts }
+            .assign(to: &$missedFasts)
+    }
     
     var completedCount: Int {
         missedFasts.filter { $0.isCompleted }.count
@@ -29,20 +33,25 @@ class FastingStore: ObservableObject {
     }
     
     func addMissedFasts(count: Int, ramadan: String, note: String) {
+        var updated = UserStore.shared.currentUser.missedFasts
         for i in 1...max(1, count) {
             let item = MissedFastItem(
                 dateString: count > 1 ? "\(ramadan) (Fast #\(i))" : ramadan,
                 note: note.isEmpty ? nil : note,
                 isCompleted: false
             )
-            missedFasts.append(item)
+            updated.append(item)
         }
+        UserStore.shared.currentUser.missedFasts = updated
     }
     
     func toggleFastCompletion(id: UUID) -> Bool {
-        if let index = missedFasts.firstIndex(where: { $0.id == id }) {
-            missedFasts[index].isCompleted.toggle()
-            return missedFasts[index].isCompleted
+        var updated = UserStore.shared.currentUser.missedFasts
+        if let index = updated.firstIndex(where: { $0.id == id }) {
+            updated[index].isCompleted.toggle()
+            let newValue = updated[index].isCompleted
+            UserStore.shared.currentUser.missedFasts = updated
+            return newValue
         }
         return false
     }

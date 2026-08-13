@@ -8,12 +8,8 @@
 import SwiftUI
 
 struct AddPartnerPage: View {
-    @AppStorage("partnerName") private var partnerName: String = ""
-    @AppStorage("partnerPhone") private var partnerPhone: String = ""
-    @AppStorage("hasPartner") private var hasPartner: Bool = false
-    
     @State private var partnerNameInput = ""
-    @State private var partnerPhoneInput = ""
+    @State private var partnerEmailInput = ""
     @State private var navigateToPartnerPeriod = false
     
     private let backgroundColor = Color(red: 250 / 255, green: 248 / 255, blue: 245 / 255)
@@ -51,7 +47,7 @@ struct AddPartnerPage: View {
                             Text("Partner's Name").font(.headline).fontWeight(.bold)
                             HStack(spacing: 12) {
                                 Image(systemName: "person.fill").foregroundColor(highlightColor).frame(width: 20)
-                                TextField("e.g. Siti Nurul", text: $partnerNameInput)
+                                TextField("e.g. Siti Nurul Balqis", text: $partnerNameInput)
                                     .autocapitalization(.words)
                             }
                             .padding(14)
@@ -60,13 +56,14 @@ struct AddPartnerPage: View {
                             .overlay(RoundedRectangle(cornerRadius: 16).stroke(borderColor, lineWidth: 1))
                         }
                         
-                        // Phone
+                        // Email
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Phone Number (Optional)").font(.headline).fontWeight(.bold)
+                            Text("Partner's Email").font(.headline).fontWeight(.bold)
                             HStack(spacing: 12) {
-                                Image(systemName: "phone.fill").foregroundColor(highlightColor).frame(width: 20)
-                                TextField("e.g. 012-3456789", text: $partnerPhoneInput)
-                                    .keyboardType(.phonePad)
+                                Image(systemName: "envelope.fill").foregroundColor(highlightColor).frame(width: 20)
+                                TextField("e.g. balqis@gmail.com", text: $partnerEmailInput)
+                                    .keyboardType(.emailAddress)
+                                    .autocapitalization(.none)
                             }
                             .padding(14)
                             .background(Color.white)
@@ -91,9 +88,9 @@ struct AddPartnerPage: View {
                         
                         // Add Partner button
                         Button {
-                            partnerName = partnerNameInput.isEmpty ? "Partner" : partnerNameInput
-                            partnerPhone = partnerPhoneInput
-                            hasPartner = true
+                            UserStore.shared.currentUser.partnerName = partnerNameInput.isEmpty ? "Siti Nurul Balqis" : partnerNameInput
+                            UserStore.shared.currentUser.partnerEmail = partnerEmailInput.isEmpty ? "balqis@gmail.com" : partnerEmailInput
+                            UserStore.shared.currentUser.hasPartner = true
                             navigateToPartnerPeriod = true
                         } label: {
                             Text("Add Partner")

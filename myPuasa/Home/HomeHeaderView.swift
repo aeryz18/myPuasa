@@ -58,6 +58,7 @@ struct HomeHeaderView: View {
                 .padding(.top,30)
                 Spacer() // Pushes the text to the left side of the screen
             }
+            
             .padding(.horizontal) // Adds breathing room on the left and right sides
         }
         
