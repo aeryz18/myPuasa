@@ -59,39 +59,97 @@ struct FastingView: View {
                                 .stroke(borderColor, lineWidth: 1)
                         )
                         
-                        // Missed Fast List Card
+                        // Missed Fast List Card (Uncompleted Fasts Only)
+                        let uncompletedIndices = fastingStore.missedFasts.indices.filter { !fastingStore.missedFasts[$0].isCompleted }
+                        let previewIndices = Array(uncompletedIndices.prefix(4))
+                        
                         VStack(spacing: 12) {
                             HStack {
                                 Text("Missed Fast List")
                                     .font(.headline)
                                     .foregroundColor(.primary)
+                                
                                 Spacer()
+                                
                                 Text("\(fastingStore.completedCount)/\(fastingStore.totalCount) Done")
                                     .font(.caption)
                                     .fontWeight(.semibold)
                                     .foregroundColor(highlightColor)
                             }
                             
-                            VStack(spacing: 0) {
-                                ForEach($fastingStore.missedFasts) { $fast in
-                                    MissedFastRow(date: fast.dateString, isCompleted: $fast.isCompleted) {
-                                        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-                                            showCongratulations = true
-                                        }
+                            if uncompletedIndices.isEmpty {
+                                // Congratulations Card when no unchecked fasts remain!
+                                VStack(spacing: 10) {
+                                    ZStack {
+                                        Circle()
+                                            .fill(Color.green.opacity(0.12))
+                                            .frame(width: 60, height: 60)
+                                        Image(systemName: "checkmark.seal.fill")
+                                            .font(.system(size: 32))
+                                            .foregroundColor(Color.green)
                                     }
                                     
-                                    if fast.id != fastingStore.missedFasts.last?.id {
-                                        Divider()
-                                            .background(borderColor)
+                                    Text("Alhamdulillah!")
+                                        .font(.headline)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.primary)
+                                    
+                                    Text("You have no pending Qada' fasts to make up!")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                        .multilineTextAlignment(.center)
+                                }
+                                .padding(20)
+                                .frame(maxWidth: .infinity)
+                                .background(Color.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 16))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(borderColor, lineWidth: 1)
+                                )
+                            } else {
+                                VStack(spacing: 0) {
+                                    ForEach(previewIndices, id: \.self) { index in
+                                        MissedFastRow(
+                                            date: fastingStore.missedFasts[index].dateString,
+                                            isCompleted: $fastingStore.missedFasts[index].isCompleted
+                                        ) {
+                                            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                                                showCongratulations = true
+                                            }
+                                        }
+                                        
+                                        if index != previewIndices.last {
+                                            Divider()
+                                                .background(borderColor)
+                                        }
                                     }
                                 }
+                                .background(Color.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 16))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(borderColor, lineWidth: 1)
+                                )
+                                
+                                // Bottom "See Details" Navigation Link
+                                NavigationLink {
+                                    FastingListView()
+                                } label: {
+                                    HStack(spacing: 4) {
+                                        Spacer()
+                                        Text("See Details")
+                                            .font(.subheadline)
+                                            .fontWeight(.bold)
+                                        Image(systemName: "chevron.right")
+                                            .font(.caption)
+                                            .fontWeight(.bold)
+                                        Spacer()
+                                    }
+                                    .foregroundColor(highlightColor)
+                                    .padding(.top, 4)
+                                }
                             }
-                            .background(Color.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .stroke(borderColor, lineWidth: 1)
-                            )
                         }
                         .padding(16)
                         .background(boxColor)
