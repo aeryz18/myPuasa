@@ -24,7 +24,15 @@ struct HomeView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 16) {
                         // Header / Greeting & Integrated Calendar Section
-                        HomeHeaderView(userName: "Balqis")
+                        HomeHeaderView(userName: UserStore.shared.currentUser.name)
+                        
+                        // Featured Ads Banner Carousel
+                        AdsCard(
+                            boxColor: boxColor,
+                            borderColor: borderColor,
+                            highlightColor: highlightColor
+                        )
+                            
                         
                         // Separated Feature Cards
                         MenstrualStatusCard(
