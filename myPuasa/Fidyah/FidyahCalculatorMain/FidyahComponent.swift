@@ -65,10 +65,8 @@ struct FidyahAboutCard: View {
             .lineSpacing(3)
 
 
-            Button {
-
-                // Guidelines action can be connected later.
-
+            NavigationLink {
+                FidyahView()
             } label: {
 
                 HStack {
@@ -404,7 +402,7 @@ struct FidyahYearCard: View {
             ) {
 
                 ForEach(
-                    2020...2030,
+                    2020...2026,
                     id: \.self
                 ) { year in
 

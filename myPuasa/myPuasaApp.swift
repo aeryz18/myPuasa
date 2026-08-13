@@ -9,9 +9,18 @@ import SwiftUI
 
 @main
 struct myPuasaApp: App {
+    @AppStorage("isLoggedIn") var isLoggedIn: Bool = false
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if isLoggedIn {
+                ContentView()
+            } else {
+                NavigationStack {
+                    loginPage()
+                }
+            }
         }
     }
 }
+

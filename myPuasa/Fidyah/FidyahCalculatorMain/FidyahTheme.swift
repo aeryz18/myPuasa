@@ -9,35 +9,36 @@ import SwiftUI
 
 enum FidyahTheme {
 
+    // Aligned with Home page color palette
     static let maroon = Color(
-        red: 0.45,
-        green: 0.12,
-        blue: 0.18
+        red: 123 / 255,
+        green: 45 / 255,
+        blue: 63 / 255
     )
 
     static let lightMaroon = Color(
-        red: 0.58,
-        green: 0.20,
-        blue: 0.27
+        red: 153 / 255,
+        green: 70 / 255,
+        blue: 88 / 255
     )
 
     static let cream = Color(
-        red: 0.97,
-        green: 0.94,
-        blue: 0.90
+        red: 237 / 255,
+        green: 231 / 255,
+        blue: 223 / 255
     )
 
     static let background = Color(
-        red: 0.98,
-        green: 0.97,
-        blue: 0.95
+        red: 250 / 255,
+        green: 248 / 255,
+        blue: 245 / 255
     )
 
-    static let border = Color.black.opacity(0.08)
-
-    static let secondaryText = Color(
-        red: 0.40,
-        green: 0.40,
-        blue: 0.40
+    static let border = Color(
+        red: 221 / 255,
+        green: 212 / 255,
+        blue: 200 / 255
     )
+
+    static let secondaryText = Color.secondary
 }

@@ -16,6 +16,8 @@ struct CalendarView: View {
     @State private var periodDates: Set<Date> = []
     
     @State private var selectingStartDate = true
+    @State private var isTrackingActive = false
+    @State private var isSaved = false
     
     private let calendar = Calendar.current
     private let healthManager = PeriodHealthManager()
@@ -80,6 +82,12 @@ struct CalendarView: View {
         healthManager.periodStatus(
             from: periodDates
         )
+    }
+    
+    private var hasPeriodInCurrentMonth: Bool {
+        periodDates.contains { date in
+            calendar.isDate(date, equalTo: currentMonth, toGranularity: .month)
+        }
     }
     
     // MARK: - Body
@@ -253,17 +261,104 @@ struct CalendarView: View {
                     .padding(.horizontal)
                     
                     
-                    // MARK: Reset
+                    // MARK: Track Period, Reset, Save & Edit Actions
                     
-                    if !periodDates.isEmpty {
-                        
-                        Button {
-                            resetPeriod()
-                        } label: {
-                            Text("Reset")
-                                .font(.system(size: 15, weight: .semibold))
+                    if isTrackingActive || startDate != nil {
+                        // STATE 2: Selecting / Editing Dates -> Show Reset & Save Buttons
+                        HStack(spacing: 16) {
+                            Button {
+                                withAnimation(.easeInOut(duration: 0.25)) {
+                                    resetPeriod()
+                                    isTrackingActive = false
+                                }
+                            } label: {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "arrow.counterclockwise")
+                                        .font(.subheadline)
+                                    Text("Reset")
+                                        .font(.system(size: 15, weight: .semibold))
+                                }
                                 .foregroundColor(.pink)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 10)
+                                .background(Color.pink.opacity(0.12))
+                                .clipShape(Capsule())
+                            }
+                            
+                            Button {
+                                withAnimation(.easeInOut(duration: 0.25)) {
+                                    if let start = startDate {
+                                        let end = endDate ?? start
+                                        if start <= end {
+                                            savePeriod(from: start, to: end)
+                                        } else {
+                                            savePeriod(from: end, to: start)
+                                        }
+                                        startDate = nil
+                                        endDate = nil
+                                        selectingStartDate = true
+                                    } else {
+                                        savePeriodDates()
+                                    }
+                                    isTrackingActive = false
+                                }
+                            } label: {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .font(.subheadline)
+                                    Text("Save")
+                                        .font(.system(size: 15, weight: .bold))
+                                }
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 22)
+                                .padding(.vertical, 10)
+                                .background(Color(red: 123 / 255, green: 45 / 255, blue: 63 / 255))
+                                .clipShape(Capsule())
+                                .shadow(color: Color(red: 123 / 255, green: 45 / 255, blue: 63 / 255).opacity(0.3), radius: 6, x: 0, y: 3)
+                            }
                         }
+                        .transition(.opacity.combined(with: .scale))
+                    } else if hasPeriodInCurrentMonth {
+                        // STATE 3: Period Record Exists in Current Month -> Show Edit Period Button
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.25)) {
+                                isTrackingActive = true
+                            }
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "square.and.pencil")
+                                    .font(.subheadline)
+                                Text("Edit Period")
+                                    .font(.system(size: 15, weight: .bold))
+                            }
+                            .foregroundColor(Color(red: 123 / 255, green: 45 / 255, blue: 63 / 255))
+                            .padding(.horizontal, 22)
+                            .padding(.vertical, 10)
+                            .background(Color(red: 123 / 255, green: 45 / 255, blue: 63 / 255).opacity(0.12))
+                            .clipShape(Capsule())
+                        }
+                        .transition(.opacity.combined(with: .scale))
+                    } else {
+                        // STATE 1: No Period Record -> Show Track Period Button
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.25)) {
+                                isTrackingActive = true
+                            }
+                        } label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: "drop.fill")
+                                    .font(.subheadline)
+                                Text("Track Period")
+                                    .font(.system(size: 15, weight: .bold))
+                            }
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 12)
+                            .background(Color(red: 123 / 255, green: 45 / 255, blue: 63 / 255))
+                            .clipShape(Capsule())
+                            .shadow(color: Color(red: 123 / 255, green: 45 / 255, blue: 63 / 255).opacity(0.3), radius: 6, x: 0, y: 3)
+                        }
+                        .transition(.opacity.combined(with: .scale))
                     }
                     
                     
@@ -341,6 +436,7 @@ struct CalendarView: View {
             // is not in the future
             
             if !isFuture {
+                isTrackingActive = true
                 selectDate(date)
             }
             

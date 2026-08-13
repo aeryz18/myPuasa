@@ -36,13 +36,44 @@ struct FidyahCalView: View {
                         spacing: 6
                     ) {
                         
-                        Text("Fidyah Calculator")
-                            .font(
-                                .system(
-                                    size: 31,
-                                    weight: .bold
+                        HStack {
+                            Text("Fidyah Calculator")
+                                .font(
+                                    .system(
+                                        size: 31,
+                                        weight: .bold
+                                    )
                                 )
-                            )
+                            
+                            Spacer()
+                            
+                            NavigationLink {
+                                FidyahRecordsView()
+                            } label: {
+                                HStack(spacing: 6) {
+                                    ZStack {
+                                        Circle()
+                                            .fill(FidyahTheme.maroon)
+                                            .frame(width: 26, height: 26)
+                                        Image(systemName: "clock.fill")
+                                            .font(.caption2)
+                                            .foregroundColor(.white)
+                                    }
+                                    
+                                    Text("History")
+                                        .font(.footnote)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(FidyahTheme.maroon)
+                                }
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 6)
+                                .background(FidyahTheme.cream)
+                                .clipShape(Capsule())
+                            }
+                        }
+                        }
+                        
+                        
                         
                         Text(
                             "Calculate your fidyah contribution"
@@ -376,11 +407,15 @@ struct FidyahCalView: View {
                             
                             
                             HStack {
-                                
                                 Text("Year")
+                                Spacer()
                                 Text("Days")
+                                Spacer()
                                 Text("Rate")
+                                Spacer()
                                 Text("Total")
+                                Color.clear
+                                    .frame(width: 20, height: 1)
                             }
                             .font(
                                 .system(
@@ -509,12 +544,21 @@ struct FidyahCalView: View {
                 FidyahTheme.background
                     .ignoresSafeArea()
             )
+            .sheet(isPresented: $showPayment) {
+                paymentView(
+                    stateName: vm.selectedState.name,
+                    rate: vm.currentRate,
+                    days: vm.summaryItems.isEmpty ? vm.numberOfDays : vm.summaryItems.reduce(0) { $0 + $1.days },
+                    totalAmount: vm.summaryItems.isEmpty ? vm.currentAmount : vm.grandTotal
+                )
+            }
         }
     }
-}
+
 
 
 #Preview {
 
     FidyahCalView()
 }
+

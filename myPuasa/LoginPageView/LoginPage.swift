@@ -1,5 +1,5 @@
 //
-//  loginPage.swift
+//  LoginPage.swift
 //  myPuasa
 //
 //  Created by STDCX_MACBOOK PRO 28 on 09/08/2026.
@@ -8,169 +8,156 @@
 import SwiftUI
 
 struct loginPage: View {
+    @AppStorage("isLoggedIn") private var isLoggedIn: Bool = false
+    
     @State private var emaiL = ""
     @State private var password = ""
     
+    private let backgroundColor = Color(red: 250 / 255, green: 248 / 255, blue: 245 / 255)
+    private let borderColor = Color(red: 221 / 255, green: 212 / 255, blue: 200 / 255)
+    private let highlightColor = Color(red: 123 / 255, green: 45 / 255, blue: 63 / 255)
+    private let cardColor = Color(red: 237 / 255, green: 231 / 255, blue: 223 / 255)
+    @State private var navigateToHome: Bool = false
     
     var body: some View {
-        NavigationStack{
+        ZStack {
+            backgroundColor.ignoresSafeArea()
             
-            VStack{
-                
-               // Image("myPuasaLogo")
-                
-                
-            }
-            .padding(50)
-            
-            VStack (spacing: 10){
-                Text("Email")
-                    .padding()
-                    .frame(maxWidth: .infinity, maxHeight: 20, alignment: .leading)
-                    .font(.title)
-                    .bold()
-                
-                
-                HStack{
-                    Image(systemName: "envelope.fill")
-                        .frame(width: 20)
-                    TextField (" Enter your email ", text: $emaiL)
-                        .border(.blue)
-                }
-                .padding()
-                
-                
-            }
-            
-            VStack (spacing: 10){
-                Text("Password")
-                    .padding()
-                    .frame(maxWidth: .infinity, maxHeight: 10, alignment: .leading)
-                    .font(.title)
-                    .bold()
-                
-                HStack{
-                    Image(systemName: "lock.fill")
-                        .frame(width: 20)
-                    TextField (" Enter your password ", text: $password)
-                        .border(.blue)
-                }
-                .padding()
-                
-                NavigationLink {
-                    HomeView()
-                } label: {
-                    Text("Login")
-                        .font(.system(size: 17, weight: .bold))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 55)
-                        .background(Color.blue)
-                        .cornerRadius(15)
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 28) {
                     
-                }
-                .padding()
-                
-                
-                Button {
-                    
-                } label: {
-                    Text("Forgot your password")
-                        .font(.system(size: 17, weight: .bold))
-                        .foregroundColor(.black)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 55)
-                        .background(Color.white)
-                        .cornerRadius(15)
-                        .border(Color.black)
-                }
-                .padding()
-                
-                
-                HStack(spacing: 4){
-                    Text("Don't have any account?")
-                    
-                    NavigationLink{
-                    signUpPAge()
-                        
-                    } label: {
-                        Text("Sign Up")
-                            .foregroundColor(.blue)
-                    }
-                    
-                }
-                
-                .padding(.top, 25)
-                
-                
-                HStack {
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundColor(.gray)
-                    
-                    Text("OR")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(.gray)
-                    
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundColor(.gray)
-                }
-                .padding(.top, 20)
-                
-            }
-            HStack(spacing: 20) {
-                
-                
-                Button {
-                    
-                } label: {
-                    HStack {
-                        Text("G")
+                    // Header
+                    VStack(spacing: 6) {
+                        Text("Welcome Back")
                             .font(.system(size: 32, weight: .bold))
-                            .foregroundColor(.black)
-                        
-                        Text("Google")
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
+                        Text("Log in to your account")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
                     }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 75)
-                    .background(Color.white)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 15)
-                            .stroke(Color.gray.opacity(0.25), lineWidth: 1)
-                    )
-                }
-                
-                Button {
+                    .padding(.top, 60)
                     
-                } label: {
-                    HStack {
-                        Image(systemName: "apple.logo")
-                            .font(.system(size: 32))
-                            .foregroundColor(.black)
+                    // Form Card
+                    VStack(spacing: 20) {
                         
-                        Text("Apple")
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(.black)
+                        // Email field
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Email")
+                                .font(.headline).fontWeight(.bold)
+                            HStack(spacing: 12) {
+                                Image(systemName: "envelope.fill")
+                                    .foregroundColor(highlightColor).frame(width: 20)
+                                TextField("Enter your email", text: $emaiL)
+                                    .keyboardType(.emailAddress)
+                                    .autocapitalization(.none)
+                            }
+                            .padding(14)
+                            .background(Color.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .overlay(RoundedRectangle(cornerRadius: 16).stroke(borderColor, lineWidth: 1))
+                        }
+                        
+                        // Password field
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Password")
+                                .font(.headline).fontWeight(.bold)
+                            HStack(spacing: 12) {
+                                Image(systemName: "lock.fill")
+                                    .foregroundColor(highlightColor).frame(width: 20)
+                                SecureField("Enter your password", text: $password)
+                            }
+                            .padding(14)
+                            .background(Color.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .overlay(RoundedRectangle(cornerRadius: 16).stroke(borderColor, lineWidth: 1))
+                        }
+                        
+                        // Forgot password
+                        HStack {
+                            Spacer()
+                            Button("Forgot your password?") {}
+                                .font(.footnote)
+                                .foregroundColor(highlightColor)
+                        }
+                        
+                        // Login Button — sets isLoggedIn and navigates to ContentView
+                        Button {
+                            isLoggedIn = true
+                            navigateToHome = true
+                        } label: {
+                            Text("Login")
+                                .font(.headline).fontWeight(.bold)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                                .background(highlightColor)
+                                .clipShape(Capsule())
+                                .shadow(color: highlightColor.opacity(0.3), radius: 6, x: 0, y: 3)
+                        }
+                        
+                        // Sign Up link
+                        HStack(spacing: 4) {
+                            Text("Don't have an account?")
+                                .foregroundColor(.secondary)
+                                .font(.subheadline)
+                            NavigationLink {
+                                signUpPAge()
+                            } label: {
+                                Text("Sign Up")
+                                    .font(.subheadline).fontWeight(.bold)
+                                    .foregroundColor(highlightColor)
+                            }
+                        }
                     }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 75)
-                    .background(Color.white)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 15)
-                            .stroke(Color.gray.opacity(0.25), lineWidth: 1)
-                    )
+                    .padding(24)
+                    .background(cardColor)
+                    .clipShape(RoundedRectangle(cornerRadius: 24))
+                    .shadow(color: Color.black.opacity(0.06), radius: 12, x: 0, y: 4)
+                    .padding(.horizontal, 20)
+                    
+                    // OR divider
+                    HStack {
+                        Rectangle().frame(height: 1).foregroundColor(.gray.opacity(0.3))
+                        Text("OR").font(.caption).fontWeight(.bold).foregroundColor(.secondary)
+                        Rectangle().frame(height: 1).foregroundColor(.gray.opacity(0.3))
+                    }
+                    .padding(.horizontal, 32)
+                    
+                    // Social buttons
+                    HStack(spacing: 16) {
+                        socialButton(label: "Apple", systemImage: "apple.logo")
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 40)
                 }
             }
-            
         }
-        
+        .navigationBarHidden(true)
+        .navigationDestination(isPresented: $navigateToHome) {
+            ContentView()
+                .navigationBarBackButtonHidden(true)
+        }
     }
     
-}
-    #Preview {
-        loginPage()
+    @ViewBuilder
+    private func socialButton(label: String, icon: String? = nil, systemImage: String? = nil) -> some View {
+        Button {} label: {
+            HStack(spacing: 8) {
+                if let icon = icon {
+                    Text(icon).font(.system(size: 20, weight: .bold)).foregroundColor(.black)
+                } else if let systemImage = systemImage {
+                    Image(systemName: systemImage).font(.system(size: 20)).foregroundColor(.black)
+                }
+                Text(label).font(.subheadline).fontWeight(.semibold).foregroundColor(.black)
+            }
+            .frame(maxWidth: .infinity).frame(height: 52)
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .overlay(RoundedRectangle(cornerRadius: 16).stroke(borderColor, lineWidth: 1))
+        }
     }
+}
 
+#Preview {
+    NavigationStack { loginPage() }
+}

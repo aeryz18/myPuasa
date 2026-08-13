@@ -6,6 +6,11 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @AppStorage("isLoggedIn") private var isLoggedIn: Bool = false
+    @AppStorage("userName") private var storedName: String = "Siti Nurul Balqis"
+    @AppStorage("userEmail") private var storedEmail: String = "balqis@gmail.com"
+    @AppStorage("userGender") private var storedGender: String = "Female"
+    
     @State private var isEditing: Bool = false
     
     @State private var name: String = "Siti Nurul Balqis"
@@ -223,6 +228,9 @@ struct ProfileView: View {
                         // Save Banner indicator when editing
                         if isEditing {
                             Button {
+                                storedName = name
+                                storedEmail = email
+                                storedGender = gender
                                 withAnimation {
                                     isEditing = false
                                 }
@@ -269,7 +277,7 @@ struct ProfileView: View {
                             
                             // Log Out Button
                             Button {
-                                // Log out action
+                                isLoggedIn = false
                             } label: {
                                 Text("Log Out")
                                     .font(.headline)
@@ -287,6 +295,11 @@ struct ProfileView: View {
                     .padding(.bottom, 24)
                 }
             }
+        }
+        .onAppear {
+            name = storedName.isEmpty ? "Siti Nurul Balqis" : storedName
+            email = storedEmail.isEmpty ? "balqis@gmail.com" : storedEmail
+            gender = storedGender.isEmpty ? "Female" : storedGender
         }
     }
 }
